@@ -1,1 +1,457 @@
-// Custom sass mixins
+
+
+//**************************************
+//          VISUALITY 
+//**************************************
+
+// Makes an element visually hidden, but accessible.
+// @see http://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+@mixin element-invisible {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+// Turns off the element-invisible effect.
+@mixin element-invisible-off {
+  position: static !important;
+  clip: auto;
+  height: auto;
+  width: auto;
+  overflow: auto;
+}
+
+// Makes an element visually hidden by default, but visible when focused.
+@mixin element-focusable {
+  @include element-invisible;
+
+  &:active,
+  &:focus {
+    @include element-invisible-off;
+  }
+}
+
+
+//**************************************
+//         DISPLAY : FLEX 
+//**************************************
+
+@mixin display-flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+@mixin inline-flex {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
+
+@mixin flex-direction($value: row) {
+  @if $value == row-reverse {
+    -webkit-box-direction: reverse;
+    -webkit-box-orient: horizontal;
+  } @else if $value == column {
+    -webkit-box-direction: normal;
+    -webkit-box-orient: vertical;
+  } @else if $value == column-reverse {
+    -webkit-box-direction: reverse;
+    -webkit-box-orient: vertical;
+  } @else {
+    -webkit-box-direction: normal;
+    -webkit-box-orient: horizontal;
+  }
+  -webkit-flex-direction: $value;
+  -moz-flex-direction: $value;
+  -ms-flex-direction: $value;
+  flex-direction: $value;
+}
+
+@mixin flex-wrap($value: nowrap) {
+  // No Webkit Box fallback.
+  -webkit-flex-wrap: $value;
+  -moz-flex-wrap: $value;
+  @if $value == nowrap {
+    -ms-flex-wrap: none;
+  } @else {
+    -ms-flex-wrap: $value;
+  }
+  flex-wrap: $value;
+}
+
+@mixin flex-flow($values: (row nowrap)) {
+  // No Webkit Box fallback.
+  -webkit-flex-flow: $values;
+  -moz-flex-flow: $values;
+  -ms-flex-flow: $values;
+  flex-flow: $values;
+}
+
+@mixin flex-grow($int: 0) {
+  -webkit-box-flex: $int;
+  -webkit-flex-grow: $int;
+  -moz-flex-grow: $int;
+  -ms-flex-positive: $int;
+  flex-grow: $int;
+}
+
+@mixin flex-shrink($int: 1) {
+  -webkit-flex-shrink: $int;
+  -moz-flex-shrink: $int;
+  -ms-flex-negative: $int;
+  flex-shrink: $int;
+}
+
+@mixin flex-basis($value: auto) {
+  -webkit-flex-basis: $value;
+  -moz-flex-basis: $value;
+  -ms-flex-preferred-size: $value;
+  flex-basis: $value;
+}
+
+@mixin flex($fg: 1, $fs: null, $fb: null) {
+
+  // Set a variable to be used by box-flex properties
+  $fg-boxflex: $fg;
+
+  // Box-Flex only supports a flex-grow value so let's grab the
+  // first item in the list and just return that.
+  @if type-of($fg) == 'list' {
+    $fg-boxflex: nth($fg, 1);
+  }
+
+  -webkit-box-flex: $fg-boxflex;
+  -webkit-flex: $fg $fs $fb;
+  -moz-box-flex: $fg-boxflex;
+  -moz-flex: $fg $fs $fb;
+  -ms-flex: $fg $fs $fb;
+  flex: $fg $fs $fb;
+}
+
+@mixin justify-content($value: flex-start) {
+  @if $value == flex-start {
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+  } @else if $value == flex-end {
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+  } @else if $value == space-between {
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+  } @else if $value == space-around {
+    -ms-flex-pack: distribute;
+  } @else {
+    -webkit-box-pack: $value;
+    -ms-flex-pack: $value;
+  }
+  -webkit-justify-content: $value;
+  -moz-justify-content: $value;
+  justify-content: $value;
+}
+
+@mixin align-items($value: stretch) {
+  @if $value == flex-start {
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+  } @else if $value == flex-end {
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+  } @else {
+    -webkit-box-align: $value;
+    -ms-flex-align: $value;
+  }
+  -webkit-align-items: $value;
+  -moz-align-items: $value;
+  align-items: $value;
+}
+
+@mixin align-self($value: auto) {
+  -webkit-align-self: $value;
+  -moz-align-self: $value;
+  @if $value == flex-start {
+    -ms-flex-item-align: start;
+  } @else if $value == flex-end {
+    -ms-flex-item-align: end;
+  } @else {
+    -ms-flex-item-align: $value;
+  }
+  align-self: $value;
+}
+
+@mixin align-content($value: stretch) {
+  -webkit-align-content: $value;
+  -moz-align-content: $value;
+  @if $value == flex-start {
+    -ms-flex-line-pack: start;
+  } @else if $value == flex-end {
+    -ms-flex-line-pack: end;
+  } @else {
+    -ms-flex-line-pack: $value;
+  }
+  align-content: $value;
+}
+
+//**************************************
+//               ORDER 
+//**************************************
+@mixin order($int: 0) {
+  -webkit-box-ordinal-group: $int + 1;
+  -webkit-order: $int;
+  -moz-order: $int;
+  -ms-flex-order: $int;
+  order: $int;
+}
+
+//**************************************
+//            PLACEHOLDER 
+//**************************************
+@mixin placeholder {
+  &::-moz-placeholder { @content }
+  &::-webkit-input-placeholder { @content }
+  &:-ms-input-placeholder { @content }
+}
+
+//**************************************
+//            OPACITY 
+//**************************************
+
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  $opacity-ie: $opacity * 100;
+  filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+//**************************************
+//              SHODOW 
+//**************************************
+
+.text-shadow (@string: 0 1px 3px rgba(0, 0, 0, 0.25)) {
+	text-shadow: @string;
+}
+.box-shadow (@string) {
+	-webkit-box-shadow: @string;
+	-moz-box-shadow:    @string;
+	box-shadow:         @string;
+}
+.drop-shadow (@x: 0, @y: 1px, @blur: 2px, @spread: 0, @alpha: 0.25) {
+	-webkit-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
+	-moz-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
+	box-shadow:		@x @y @blur @spread rgba(0, 0, 0, @alpha);
+}
+.inner-shadow (@x: 0, @y: 1px, @blur: 2px, @spread: 0, @alpha: 0.25) {
+	-webkit-box-shadow: inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
+	-moz-box-shadow:    inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
+	box-shadow:         inset @x @y @blur @spread rgba(0, 0, 0, @alpha);
+}
+//**************************************
+//             GRADIENT 
+//**************************************
+.gradient (@startColor: #eee, @endColor: white) {
+	background-color: @startColor;
+	background: -webkit-gradient(linear, left top, left bottom, from(@startColor), to(@endColor));
+	background: -webkit-linear-gradient(top, @startColor, @endColor);
+	background: -moz-linear-gradient(top, @startColor, @endColor);
+	background: -ms-linear-gradient(top, @startColor, @endColor);
+	background: -o-linear-gradient(top, @startColor, @endColor);
+}
+.horizontal-gradient (@startColor: #eee, @endColor: white) {
+ 	background-color: @startColor;
+	background-image: -webkit-gradient(linear, left top, right top, from(@startColor), to(@endColor));
+	background-image: -webkit-linear-gradient(left, @startColor, @endColor);
+	background-image: -moz-linear-gradient(left, @startColor, @endColor);
+	background-image: -ms-linear-gradient(left, @startColor, @endColor);
+	background-image: -o-linear-gradient(left, @startColor, @endColor);
+}
+
+//**************************************
+//             ANIMATIONS 
+//**************************************
+
+.animation (@name, @duration: 300ms, @delay: 0, @ease: ease) {
+	-webkit-animation: @name @duration @delay @ease;
+	-moz-animation:    @name @duration @delay @ease;
+	-ms-animation:     @name @duration @delay @ease;
+}
+
+//**************************************
+//       TRANSFORM AND TRANSATIONS 
+//**************************************
+.transition (@transition) {
+	-webkit-transition: @transition;  
+	-moz-transition:    @transition;
+	-ms-transition:     @transition; 
+	-o-transition:      @transition;  
+}
+.transform(@string){
+	-webkit-transform: @string;
+	-moz-transform: 	 @string;
+	-ms-transform: 		 @string;
+	-o-transform: 		 @string;
+}
+.scale (@factor) {
+	-webkit-transform: scale(@factor);
+	-moz-transform: 	 scale(@factor);
+	-ms-transform: 		 scale(@factor);
+	-o-transform: 		 scale(@factor);
+}
+.rotate (@deg) {
+	-webkit-transform: rotate(@deg);
+	-moz-transform: 	 rotate(@deg);
+	-ms-transform: 		 rotate(@deg);
+	-o-transform: 		 rotate(@deg);
+}
+.skew (@deg, @deg2) {
+	-webkit-transform:       skew(@deg, @deg2);
+	-moz-transform: 	 skew(@deg, @deg2);
+	-ms-transform: 		 skew(@deg, @deg2);
+	-o-transform: 		 skew(@deg, @deg2);
+}
+.translate (@x, @y:0) {
+	-webkit-transform:       translate(@x, @y);
+	-moz-transform: 	 translate(@x, @y);
+	-ms-transform: 		 translate(@x, @y);
+	-o-transform: 		 translate(@x, @y);
+}
+.translate3d (@x, @y: 0, @z: 0) {
+	-webkit-transform:       translate3d(@x, @y, @z);
+	-moz-transform: 	 translate3d(@x, @y, @z);
+	-ms-transform: 		 translate3d(@x, @y, @z);
+	-o-transform: 		 translate3d(@x, @y, @z);
+}
+.perspective (@value: 1000) {
+	-webkit-perspective: 	@value;
+	-moz-perspective: 	@value;
+	-ms-perspective: 	@value;
+	perspective: 		@value;
+}
+.transform-origin (@x:center, @y:center) {
+	-webkit-transform-origin: @x @y;
+	-moz-transform-origin:    @x @y;
+	-ms-transform-origin:     @x @y;
+	-o-transform-origin:      @x @y;
+}
+
+//**************************************
+//  Center-align a block level element
+//**************************************
+
+// Quickly center any element within its parent. Requires width or max-width to be set.
+
+@mixin center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+//----------------     Usage:     -----------------------
+//                 .footer-wrap {
+//                   width: 450px;
+//                  @include center-block;
+//                   }
+//------------------------------------------------------
+
+//**************************************
+//         Text Overflow
+//**************************************
+
+//  An easy way to truncate text with an ellipsis. Requires the element to be block or inline-block.
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+//----------------     Usage:     -----------------------
+.text-truncate {
+ @include text-truncate;
+}
+
+
+//**************************************
+//        Absolute Positioned
+//**************************************
+
+//Pass in the desired location of your target element to produce all the necessary positioning code.
+
+@mixin abs-pos ($top: auto, $right: auto, $bottom: auto, $left: auto) {
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+  position: absolute;
+}
+
+//----------------     Usage:     -----------------------
+.abs {
+  @include abs-pos(10px, 10px, 5px, 15px);
+}
+//**************************************
+//             Font Size
+//**************************************
+// This mixin sets the font size in rem's with a px fallback.
+ 
+ @mixin font-size($sizeValue: 12 ){
+  font-size: $sizeValue + px; //fallback for old browsers
+  font-size: (0.125 * $sizeValue) + rem;
+}
+//----------------     Usage:     -----------------------
+//          body {
+//           @include font-size(16);
+//              }
+
+//**************************************
+//           Line Height
+//**************************************
+
+//This mixin sets the line height in rem's with a px fallback.
+
+@mixin line-height($heightValue: 12 ){
+    line-height: $heightValue + px; //fallback for old browsers
+    line-height: (0.125 * $heightValue) + rem;
+}
+//----------------     Usage:     -----------------------
+//            body {
+//             @include line-height (16);
+//              }
+
+//**************************************
+//           clearfix
+//**************************************
+%clearfix {
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+}
+
+//----------------     Usage:     -----------------------
+//        .article {
+//            @extend %clearfix;
+//              }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
